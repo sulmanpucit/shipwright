@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="500" viewBox="0 0 880 500" role="img" aria-label="A Shipwright check-in in the terminal: step 2 of 8, reproduce, done. It lists what it learned with evidence, what it will do next, and asks approve, change, or stop. The user replies go.">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0d1722"/><stop offset="1" stop-color="#0a121b"/></linearGradient>
+    <filter id="sh" x="-5%" y="-5%" width="110%" height="115%"><feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#000" flood-opacity=".35"/></filter>
+  </defs>
+  <rect x="20" y="14" width="840" height="466" rx="14" fill="url(#bg)" stroke="#1f2f3f" filter="url(#sh)"/>
+  <rect x="20" y="14" width="840" height="40" rx="14" fill="#121e2b"/><rect x="20" y="40" width="840" height="14" fill="#121e2b"/>
+  <circle cx="46" cy="34" r="6.5" fill="#ff5f57"/><circle cx="68" cy="34" r="6.5" fill="#febc2e"/><circle cx="90" cy="34" r="6.5" fill="#28c840"/>
+  <text x="440" y="39" text-anchor="middle" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13" fill="#6b7d8f">claude · ~/acme-web</text>
+  <g font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="15" fill="#c9d4df" xml:space="preserve">
+    <text x="48" y="90"><tspan fill="#ff7a3d">❯</tspan> /shipwright:ticket <tspan fill="#ffffff" font-weight="700">ACME-482</tspan></text>
+    <text x="48" y="124" fill="#5f7082">  ✓ Step 0 Preflight   ✓ Step 1 Read   (approved)</text>
+    <text x="48" y="162"><tspan fill="#ffffff" font-weight="700">Step 2 of 8: Reproduce</tspan>  <tspan fill="#3fb950">✅ done</tspan></text>
+    <text x="48" y="194" fill="#ffffff" font-weight="700">Learned</text>
+    <text x="48" y="220">  • Checkout button overlaps the total at 375px: <tspan fill="#ff7a3d">-12px</tspan> gap</text>
+    <text x="48" y="244">  • Figma: 16px gap. Page: <tspan fill="#79c0ff">flex-wrap</tspan> missing on the footer row</text>
+    <text x="48" y="268">  • Source: <tspan fill="#79c0ff">src/cart/cart-footer.tsx:41</tspan></text>
+    <text x="48" y="292">  • Still broken on <tspan fill="#79c0ff">release-3.2</tspan>; desktop unaffected</text>
+    <text x="48" y="326" fill="#ffffff" font-weight="700">Next: Step 3, Branch</text>
+    <text x="48" y="352">  • <tspan fill="#a5d6ff">git fetch origin &amp;&amp; git switch -c ACME-482 origin/release-3.2</tspan></text>
+    <text x="48" y="388" fill="#ffd866" font-weight="700">Approve, change, or stop?</text>
+    <text x="48" y="428"><tspan fill="#ff7a3d">❯</tspan> <tspan fill="#ffffff">go</tspan></text>
+    <text x="48" y="458" fill="#5f7082">  ⠋ Step 3 Branch…</text>
+  </g>
+</svg>

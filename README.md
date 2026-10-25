@@ -1,177 +1,305 @@
-<div align="center">
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.svg">
+    <img src="assets/logo-light.svg" width="460" alt="Shipwright: ticket to pull request">
+  </picture>
+</p>
 
-# ⚓ Shipwright
+<h3 align="center">Hand it a ticket. Get back a verified pull request.</h3>
 
-### Hand it a ticket. Get back a verified pull request.
+<p align="center">
+  <em>It reproduces the bug in a real browser, fixes it, proves the fix, and opens the PR.<br>
+  You approve every step. It never moves on without you.</em>
+</p>
 
-**A Claude Code plugin that takes a ticket from your tracker to a reviewed-ready PR,<br>reproducing the bug in a real browser first and proving the fix after,<br>while you stay at the helm for every step.**
+<p align="center">
+  <a href="https://github.com/sulmanpucit/shipwright/stargazers"><img src="https://img.shields.io/github/stars/sulmanpucit/shipwright?style=flat-square&color=d9480f&label=stars" alt="Stars"></a>
+  <a href="https://github.com/sulmanpucit/shipwright/releases"><img src="https://img.shields.io/github/v/tag/sulmanpucit/shipwright?style=flat-square&color=0b1f33&label=version" alt="Version"></a>
+  <img src="https://img.shields.io/badge/Claude%20Code-plugin-0b1f33?style=flat-square" alt="Claude Code plugin">
+  <img src="https://img.shields.io/badge/works%20with-Jira%20%C2%B7%20Linear%20%C2%B7%20GitHub-0b1f33?style=flat-square" alt="Works with Jira, Linear, GitHub Issues">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-0b1f33?style=flat-square" alt="MIT license"></a>
+</p>
 
-```
-/shipwright:setup            # once per repo: a wizard writes your project config
-/shipwright:ticket PROJ-123  # every ticket: read → reproduce → branch → plan → fix → verify → ship
-```
+<p align="center">
+  <a href="#install"><strong>Install</strong></a> ·
+  <a href="#how-it-works"><strong>How it works</strong></a> ·
+  <a href="#set-up-your-repo-in-a-minute"><strong>Setup</strong></a> ·
+  <a href="#guardrails"><strong>Guardrails</strong></a> ·
+  <a href="#faq"><strong>FAQ</strong></a>
+</p>
 
-[Install](#install) · [How it works](#how-it-works) · [Configure](#configure-your-repo) · [Safety](#safety) · [FAQ](#faq)
+<br>
 
-</div>
+<p align="center">
+  <img src="assets/hero.svg" width="820" alt="A Shipwright check-in: step 2 of 8, reproduce, done. What it learned, what it will do next, and the question: approve, change, or stop?">
+</p>
 
 ---
 
-## The problem
+A shipwright doesn't launch a ship in one go. They build it plank by plank, and the captain inspects every one.
 
-You already know the loop. Open the ticket. Scroll through every comment, because the last one changed the scope. Open the screenshots. Find a page that shows the bug. Poke at it in DevTools. Find the code. Cut a branch from the right release branch. Plan. Fix. Run the type-check, the linter, the tests. Open the page again and check it really is fixed, on desktop and mobile. Write the commit. Fill in the PR template. Take before and after screenshots. Go back to the ticket and leave a note for QA.
+**Shipwright puts that discipline inside Claude Code.** One command takes a ticket all the way to a pull request: read, reproduce, branch, plan, fix, verify, ship. After every step it stops and tells you, in a few lines, **what it learned and what it's about to do.** You say *go*, *change this*, or *stop*.
 
-With an AI assistant you can do all of that faster, but you still have to **drive every step**: "now read the comments", "now open the browser", "now go to plan mode", "now verify it", "now raise the PR". The assistant does the work. You do the project management.
+You stop giving instructions and start making decisions.
 
-## The fix
+## Before / after
 
-Shipwright turns that loop into one command. You give it a ticket. It works through eight steps, and after each one it stops and tells you, in a few lines, **what it learned and what it is about to do**. You reply "go", "change this", or "stop".
+<table>
+<tr>
+<th width="50%">Without Shipwright</th>
+<th width="50%">With Shipwright</th>
+</tr>
+<tr valign="top">
+<td>
 
-You stop typing instructions and start making decisions.
-
-```
-**Step 2 of 8: Reproduce** ✅ done
-
-**Learned**
-- Reproduced on staging at 375px: the card title overflows its box by 14px.
-- Figma says 16px/24px; the page renders 18px/28px.
-- Source: components/card/card-title.tsx:42 uses `text-lg` instead of the `title-sm` token.
-- Not fixed on the base branch either.
-
-**Next: Step 3, Branch**
-- git fetch origin && git switch -c PROJ-123 origin/release-2.5
-
-**Approve, change, or stop?**
-```
-
-## How it works
-
-```
- 0 Preflight → 1 Read → 2 Reproduce → 3 Branch → 4 Plan → 5 Fix → 6 Verify → 7 Ship → 8 Report
-                                                                              └── only these two leave your machine
-```
-
-| # | Step | What Shipwright does |
-| --- | --- | --- |
-| **0** | **Preflight** | Checks which tools you have connected (tracker, browser, git host, Figma) and whether your working tree is clean. Tells you exactly how to fix anything missing. No config in this repo yet? It runs the [setup wizard](#configure-your-repo) first. |
-| **1** | **Read** | Reads the ticket, **every** comment oldest to newest, opens **every** screenshot, follows design links. Summarises the ask, the acceptance criteria and any contradictions. |
-| **2** | **Reproduce** | Opens the page in a real browser and proves the bug with measurements, computed styles, console and network evidence. Compares against the design. Finds the code responsible. |
-| **3** | **Branch** | Cuts a branch from your base branch. **Only after the bug is reproduced:** if it can't be reproduced, there is nothing to branch for, and Shipwright tells you what it tried instead. |
-| **4** | **Plan** | Enters plan mode: the cause, each file to change and why, the tests, the exact browser checks it will run to prove the fix, and the open questions. |
-| **5** | **Fix** | Makes only the approved changes, following your repo's conventions. Runs type-check, lint and the related tests, and separates failures it caused from ones already on the base branch. |
-| **6** | **Verify** | Starts your dev server, re-runs the original reproduction, runs every planned check at every viewport, and checks the neighbours it might have broken. Reports a pass/fail table. |
-| **7** | **Ship** | Commits, pushes and opens the PR with your template. You see the exact commit message and PR body **before** it happens. |
-| **8** | **Report** | Drafts the ticket comment for QA (what changed, PR link, how to test). You see the exact text **before** it is posted. |
-
-### It remembers
-
-Every run is logged to `~/.claude/shipwright/<repo>/<KEY>.md`. Close your laptop, come back tomorrow, start a new session:
-
-```
-/shipwright:ticket PROJ-123 resume
+```text
+> read PROJ-482 and all the comments
+> open the screenshots too
+> open staging and reproduce it
+> check it on mobile as well
+> find the code that does this
+> branch off the release branch
+> ok, plan the fix
+> now make the change
+> run the tests and lint
+> check it in the browser again
+> commit it
+> raise the PR, use our template
+> add before/after screenshots
+> leave a note for QA on the ticket
 ```
 
-It picks up at the next step that you haven't approved yet.
+**14 instructions.** You manage the work.
 
-## Why the stops matter
+</td>
+<td>
 
-Fully autonomous agents are impressive right up until they confidently fix the wrong bug, on the wrong branch, and post about it on the ticket. Shipwright is built on the opposite bet: **the expensive mistakes happen at decision points, so those are exactly where a human should be.**
+```text
+> /shipwright:ticket PROJ-482
 
-- Each check-in is a few lines of evidence, not a wall of narration, so approving takes seconds.
-- Approval covers one step. It never carries over.
-- "change ..." redoes the current step your way. "stop" saves the log and ends cleanly.
+  Step 1 Read       → go
+  Step 2 Reproduce  → go
+  Step 3 Branch     → go
+  Step 4 Plan       → "keep the old prop"
+  Step 4 Plan       → go
+  Step 5 Fix        → go
+  Step 6 Verify     → go
+  Step 7 Ship       → go
+  Step 8 Report     → go
+```
 
-You get the speed of automation and the judgement of a reviewer who saw every step.
+**1 command. You only make the decisions,** each backed by evidence you can check in seconds.
+
+</td>
+</tr>
+</table>
 
 ## Install
 
-```
+```bash
 /plugin marketplace add sulmanpucit/shipwright
 /plugin install shipwright@shipwright
 ```
 
-Start a new Claude Code session, open your repo, run `/shipwright:setup` once, then `/shipwright:ticket <KEY>`.
+Restart Claude Code, open your repo, then:
 
-## Connect your tools
-
-Shipwright **ships no credentials and bundles no servers**. It uses whatever you have connected, signed in as you, so it works the same for everyone on your team with their own access. Step 0 tells you what's missing.
-
-| Need | Options |
-| --- | --- |
-| **Tickets** | Jira (claude.ai Atlassian connector, or `claude mcp add --transport http atlassian https://mcp.atlassian.com/v1/mcp`), Linear, or GitHub Issues via `gh` |
-| **Browser** | The [Claude in Chrome](https://claude.com/chrome) extension, or Playwright MCP (`claude mcp add playwright npx @playwright/mcp@latest`) |
-| **Git host** | `gh auth login` |
-| **Designs** *(optional)* | Figma MCP: `claude mcp add --transport http figma https://mcp.figma.com/mcp` |
-
-Missing something? Shipwright does less rather than failing. With no browser, reproduce and verify fall back to code and tests, and every check-in says so. With no tracker, paste the ticket in.
-
-## Configure your repo
-
-Every team ships differently, so each repo gets a small config file, **`.claude/shipwright.md`**. You don't write it by hand. Run the wizard:
-
+```bash
+/shipwright:setup            # once per repo: a wizard writes your project config
+/shipwright:ticket PROJ-482  # every ticket after that
 ```
+
+## How it works
+
+<p align="center">
+  <img src="assets/pipeline.svg" width="880" alt="Nine steps from Preflight to Report with an approval gate between each. Only Ship and Report leave your machine.">
+</p>
+
+| | Step | What Shipwright does |
+|:-:|---|---|
+| **0** | **Preflight** | Finds your connected tools (tracker, browser, git host, Figma) and checks your working tree. Missing something? It tells you the one-line fix. No config yet? It runs the [setup wizard](#set-up-your-repo-in-a-minute) first. |
+| **1** | **Read** | Reads the ticket and **every** comment, oldest to newest, because the last one usually changed the scope. Opens **every** screenshot and follows design links. |
+| **2** | **Reproduce** | Opens the page in a real browser and **proves** the bug with measurements, computed styles, console and network evidence. Compares against the design. Finds the code. |
+| **3** | **Branch** | Cuts your branch from the right base. **Only after reproducing:** if the bug can't be reproduced, it stops and shows you everything it tried. |
+| **4** | **Plan** | Plan mode: the cause, each file to change and why, the tests, and the **exact browser checks** that will prove the fix. |
+| **5** | **Fix** | Makes only the approved changes in your repo's style. Runs type-check, lint and tests, and separates failures it caused from ones already on the base branch. |
+| **6** | **Verify** | Starts your dev server, replays the original reproduction, runs every planned check at every viewport, and looks for collateral damage. Shows a pass/fail table. |
+| **7** | **Ship** | Commit, push, PR, using your template and conventions. You see the **exact text** before anything leaves your machine. |
+| **8** | **Report** | Drafts the ticket comment for QA: what changed, PR link, how to test. Posted only after you've read it. |
+
+<details>
+<summary><strong>What a check-in looks like, step by step</strong></summary>
+<br>
+
+Every step ends with the same four parts, so you always know where to look:
+
+```text
+**Step 5 of 8: Fix** ✅ done
+
+**Learned**
+- cart-footer.tsx: added flex-wrap and gap-16 to the footer row (matches Figma)
+- cart-footer.test.tsx: one test for the wrapped layout at 375px
+- type-check ✓  lint ✓  tests 14/14 ✓
+- No deviations from the plan
+
+**Next: Step 6, Verify**
+- Start the dev server (npm run dev), open /cart at 375 and 1440
+- Measure button-to-total gap: expect 16px at both
+- Replay the Step 2 reproduction
+
+**Approve, change, or stop?**
+```
+
+- **go**: run the next step.
+- **change …**: redo this step your way, then check in again.
+- **stop**: save progress and end cleanly.
+
+</details>
+
+<details>
+<summary><strong>Pick up tomorrow where you left off</strong></summary>
+<br>
+
+Every run is logged to `~/.claude/shipwright/<repo>/<KEY>.md`: each step, what was learned, what you decided. Close the laptop, start a fresh session:
+
+```bash
+/shipwright:ticket PROJ-482 resume
+```
+
+It summarises where things stand and continues from the next step you haven't approved. Nothing is redone unless you ask.
+
+</details>
+
+## Why it stops after every step
+
+Fully autonomous agents are impressive right up until they confidently fix the wrong bug, on the wrong branch, and post about it on the ticket.
+
+Shipwright bets the other way: **the expensive mistakes happen at decision points, so that's exactly where you should be.** The craft is in making each stop cheap:
+
+- **Short.** A handful of facts, not a wall of narration.
+- **Evidence-first.** Every claim cites a URL, a measurement, a command's output or a `file:line`.
+- **One step at a time.** Approval never carries over. "go" on the plan doesn't mean "go" on the push.
+
+You keep the speed of automation and the judgement of a reviewer who watched every step.
+
+## Set up your repo in a minute
+
+Every team ships differently. Shipwright learns yours with a wizard, not a form:
+
+```bash
 /shipwright:setup
 ```
 
-(or just run `/shipwright:ticket` in a new repo and it offers the wizard itself).
+**It detects first and asks second.** It reads your lockfile and scripts, release branches, PR template, last 50 commits and branch names, your `CLAUDE.md` and `CONTRIBUTING.md`, and which tools are connected. Then it asks **at most four questions**, with its best guess pre-selected:
 
-The wizard **detects first and asks second**. It reads your lockfile and scripts, your release branches, your PR template, your last 50 commit messages and branch names, your `CLAUDE.md` / `CONTRIBUTING.md`, and which tools you have connected. Then it asks **at most four multiple-choice questions** about what it couldn't be sure of, with its best guess pre-selected:
-
-```
+```text
 Base branch for new work?
-  ● Latest release-* branch (Detected: release-2.5)
+  ● Latest release-* branch   (Detected: release-3.2)
   ○ main
   ○ develop
 
 Commit format?
-  ● PROJ-123: summary (Detected, e.g. "PROJ-981: Fix card title overflow")
+  ● PROJ-123: summary         (Detected, e.g. "PROJ-471: Fix cart badge count")
   ○ Conventional Commits
   ○ Free text
 ```
 
-One optional free-text question follows: *"Anything a new teammate usually gets wrong here?"* Those answers become house rules. You see the whole file before it is written.
+Plus one optional question: *"Anything a new teammate usually gets wrong here?"* Those answers become house rules Shipwright follows on every ticket.
 
-Commit it and your whole team gets the same workflow. Want it just for you? `/shipwright:setup --local` writes a gitignored `.claude/shipwright.local.md`. Re-run the wizard any time to update; it keeps what you already set.
+You preview the whole file before it's written to `.claude/shipwright.md`. **Commit it and your whole team ships the same way.** Want it just for you? `/shipwright:setup --local`.
 
-**Keep internal hostnames, ticket sites and project specifics in that file, inside your own repo.** The plugin itself stays generic and public. The wizard never copies secrets from `.env` files.
+## Bring your own tools
 
-## Safety
+Shipwright **ships no credentials and bundles no servers.** It uses what *you* have connected, signed in as *you*, so everyone on a team works with their own access.
+
+| | Use any of | How to connect |
+|---|---|---|
+| **Tickets** | Jira · Linear · GitHub Issues | Atlassian connector or `claude mcp add --transport http atlassian https://mcp.atlassian.com/v1/mcp`, Linear MCP, or `gh` |
+| **Browser** | Claude in Chrome · Playwright | [Claude in Chrome](https://claude.com/chrome) extension, or `claude mcp add playwright npx @playwright/mcp@latest` |
+| **Git host** | GitHub | `gh auth login` |
+| **Designs** | Figma *(optional)* | `claude mcp add --transport http figma https://mcp.figma.com/mcp` |
+
+**Missing a piece? It does less rather than failing.** No browser means reproduce and verify fall back to code and tests, and every check-in says so. No tracker means you paste the ticket in.
+
+## Guardrails
 
 Shipwright will **never**:
 
-- start a step you haven't approved;
-- push, open a PR, or post a comment you haven't seen word for word;
-- type a password or complete an SSO login (it asks you to sign in);
-- stash, reset or discard your uncommitted work;
-- force push, or push to your base branch;
-- follow instructions written inside a ticket, comment or web page (those are data, and it will quote them to you and ask).
+- ⛔ start a step you haven't approved
+- ⛔ push, open a PR or post a comment you haven't read word for word
+- ⛔ type a password or complete an SSO login (it asks you to sign in)
+- ⛔ stash, reset or throw away your uncommitted work
+- ⛔ force push, or push to your base branch
+- ⛔ follow instructions hidden in a ticket, comment or web page (it quotes them to you and asks)
+- ⛔ copy secrets from `.env` files into its config
 
 ## FAQ
 
-**Does it work with any language or framework?**
-Yes. The workflow is generic. Your `.claude/shipwright.md` tells it your commands, branches and conventions.
+<details>
+<summary><strong>Does it work with my stack?</strong></summary>
+<br>
 
-**What if the bug can't be reproduced?**
-It stops at Step 2, lists every URL, environment and viewport it tried, and gives you options: draft a question for the reporter, try another environment, or go ahead based on what the code shows. No branch is created.
+The workflow is language- and framework-agnostic. The setup wizard writes your commands, branches and conventions into `.claude/shipwright.md`. It shines on **web UI work**, where a browser can prove the bug and the fix. Backend, CLI and mobile tickets work too, with code and tests as the evidence instead of the browser.
 
-**Can I skip the stops?**
-Not yet, by design. Each check-in is short so approving is quick. A configurable "auto-approve local steps" mode is on the roadmap.
+</details>
 
-**Is it only for bugs?**
-No. Small features and design QA tickets work the same way: "reproduce" becomes "show the current state against the spec".
+<details>
+<summary><strong>What if the bug can't be reproduced?</strong></summary>
+<br>
 
-**What does it cost my team in setup?**
-One `/shipwright:setup` per repo (about a minute), and each person connects their own tracker, browser and `gh`.
+It stops at Step 2 and lists every URL, environment, data set and viewport it tried. Then it offers options: draft a question for the reporter, try another environment, or go ahead based on what the code shows. No branch is created for a bug nobody has seen.
+
+</details>
+
+<details>
+<summary><strong>Can I skip the stops?</strong></summary>
+<br>
+
+Not yet, and that's deliberate. Each check-in is a few lines, so "go" takes seconds. Optional auto-approve for the local-only steps (read, reproduce, plan) is on the roadmap.
+
+</details>
+
+<details>
+<summary><strong>Is it only for bugs?</strong></summary>
+<br>
+
+No. Small features and design QA tickets run the same way. "Reproduce" becomes "show the current state against the spec", and "verify" proves the page now matches it.
+
+</details>
+
+<details>
+<summary><strong>Where do my company's details live?</strong></summary>
+<br>
+
+In `.claude/shipwright.md`, inside **your** repo. Internal hostnames, ticket sites, branch rules and house rules never touch this plugin. Shipwright itself stays generic.
+
+</details>
+
+<details>
+<summary><strong>How is this different from just asking Claude Code?</strong></summary>
+<br>
+
+Claude Code can do every step. Shipwright makes it do **all** of them, **in order**, **with evidence**, the same way for everyone on your team, and stop at the right moments, without you having to remember to ask. The reproduction comes before the branch, the verification is planned before the fix, and nothing leaves your machine unseen.
+
+</details>
 
 ## Roadmap
 
-- [ ] Optional auto-approve for local-only steps (read, reproduce, plan)
-- [ ] Batch mode: triage a sprint's tickets in one pass
-- [ ] Shared run logs for handing a ticket over to a teammate
+- [x] Eight-step ticket workflow with approval gates
+- [x] Resume across sessions
+- [x] Setup wizard that detects your repo's conventions
+- [ ] Optional auto-approve for local-only steps
+- [ ] Batch triage: walk a sprint's tickets and reproduce each
+- [ ] Hand a run over to a teammate
 - [ ] More trackers: Shortcut, Azure Boards
 
-Ideas and pull requests welcome. Open an issue with the ticket flow that Shipwright got wrong. That's the most useful bug report there is.
+## Contributing
 
-## License
+The best bug report is a ticket flow Shipwright got wrong. [Open an issue](https://github.com/sulmanpucit/shipwright/issues) with the step, what it did and what it should have done. Pull requests welcome. The whole plugin is two Markdown skills in [`skills/`](skills/), so you can read it in five minutes.
 
-[MIT](LICENSE)
+If Shipwright saved you an afternoon, a ⭐ helps other people find it.
+
+<br>
+
+<p align="center">
+  <sub>MIT licensed · Built for <a href="https://claude.com/claude-code">Claude Code</a></sub>
+</p>
