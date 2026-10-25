@@ -7,7 +7,8 @@
 **A Claude Code plugin that takes a ticket from your tracker to a reviewed-ready PR,<br>reproducing the bug in a real browser first and proving the fix after,<br>while you stay at the helm for every step.**
 
 ```
-/shipwright:ticket PROJ-123
+/shipwright:setup            # once per repo: a wizard writes your project config
+/shipwright:ticket PROJ-123  # every ticket: read → reproduce → branch → plan → fix → verify → ship
 ```
 
 [Install](#install) · [How it works](#how-it-works) · [Configure](#configure-your-repo) · [Safety](#safety) · [FAQ](#faq)
@@ -52,7 +53,7 @@ You stop typing instructions and start making decisions.
 
 | # | Step | What Shipwright does |
 | --- | --- | --- |
-| **0** | **Preflight** | Checks which tools you have connected (tracker, browser, git host, Figma) and whether your working tree is clean. Tells you exactly how to fix anything missing. |
+| **0** | **Preflight** | Checks which tools you have connected (tracker, browser, git host, Figma) and whether your working tree is clean. Tells you exactly how to fix anything missing. No config in this repo yet? It runs the [setup wizard](#configure-your-repo) first. |
 | **1** | **Read** | Reads the ticket, **every** comment oldest to newest, opens **every** screenshot, follows design links. Summarises the ask, the acceptance criteria and any contradictions. |
 | **2** | **Reproduce** | Opens the page in a real browser and proves the bug with measurements, computed styles, console and network evidence. Compares against the design. Finds the code responsible. |
 | **3** | **Branch** | Cuts a branch from your base branch. **Only after the bug is reproduced:** if it can't be reproduced, there is nothing to branch for, and Shipwright tells you what it tried instead. |
