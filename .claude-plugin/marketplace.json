@@ -1,0 +1,17 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "shipwright",
+  "description": "Ticket to PR workflow for Claude Code.",
+  "owner": {
+    "name": "sulmanpucit",
+    "url": "https://github.com/sulmanpucit"
+  },
+  "plugins": [
+    {
+      "name": "shipwright",
+      "source": "./",
+      "description": "Ticket to PR: read, reproduce, branch, plan, fix, verify, ship. Approval gate after every step.",
+      "category": "workflow"
+    }
+  ]
+}

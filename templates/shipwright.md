@@ -1,0 +1,54 @@
+# Shipwright config
+
+<!--
+Project rules for the /ticket workflow. Commit this file to the repo so the
+whole team shares it. Personal preferences (browser, extra pauses) go in
+.claude/shipwright.local.md, which should be gitignored.
+Everything here overrides the plugin defaults. Delete what you do not need.
+-->
+
+## Tracker
+- Type: jira | linear | github
+- Site: https://your-org.atlassian.net
+- Ticket key pattern: PROJ-123
+
+## Branching
+- Base branch rule: e.g. "latest `release-*` branch on origin" or "develop"
+- Branch name: `<KEY>` (e.g. PROJ-123) or `<type>/<KEY>-<slug>`
+
+## Commands
+- Install: `npm ci`
+- Dev server: `npm run dev` (URL: http://localhost:3000)
+- Type-check: `npm run type-check`
+- Lint a file: `npx eslint <file> --fix`
+- Test a file: `npx jest <path>`
+
+## Environments
+<!-- Where to reproduce. -->
+- develop: https://develop.example.com
+- staging: https://staging.example.com
+
+## Browser
+- Tool: Claude in Chrome | Playwright
+- Viewports: desktop 1440, mobile 375
+- Screenshots: only in the PR | always | never
+
+## Commit
+- Format: `<KEY>: <summary>` (one line)
+- AI attribution: none | allowed
+
+## Pull request
+- Template: `.github/pull_request_template.md` (fill only its sections)
+- Base: the branch from "Branching"
+- Screenshots: before/after table in Testing Instructions for UI changes
+- Mention AI: no
+
+## Ticket comment
+- Style: short; what changed, PR link, how to test, what QA cannot test locally
+- Status transition: never | propose
+
+## House rules
+<!-- Anything a new teammate would get wrong. Examples: -->
+- Never run `prettier --write` on ts/tsx; use eslint --fix.
+- Never `git stash`.
+- No em dashes in comments or PR text.
