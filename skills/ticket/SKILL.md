@@ -48,7 +48,7 @@ Keep a run log at `~/.claude/shipwright/<repo-name>/<TICKET-KEY>.md` (create the
 
 Read `.claude/shipwright.md` in the repo root, then `.claude/shipwright.local.md` if present (personal overrides, takes precedence). The config defines the tracker, base branch rule, branch and commit formats, commands, environments, browser, PR template and house rules. **Config rules override the defaults in this file.** User instructions in chat override both.
 
-If no config exists, offer in Step 0 to create one from `${CLAUDE_PLUGIN_ROOT}/templates/shipwright.md`, filled with what you can detect (package manager and scripts, default branch, PR template at `.github/pull_request_template.md`, dev server command). Show it to the user before writing it.
+If no config exists, offer in Step 0 to run the setup wizard: follow `${CLAUDE_PLUGIN_ROOT}/skills/setup/SKILL.md` (the same flow as `/shipwright:setup`), then return to the Step 0 check-in. If the user declines, continue on detected defaults and say which ones in each check-in.
 
 ---
 

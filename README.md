@@ -89,7 +89,7 @@ You get the speed of automation and the judgement of a reviewer who saw every st
 /plugin install shipwright@shipwright
 ```
 
-Start a new Claude Code session, open your repo, and run `/shipwright:ticket <KEY>`.
+Start a new Claude Code session, open your repo, run `/shipwright:setup` once, then `/shipwright:ticket <KEY>`.
 
 ## Connect your tools
 
@@ -106,27 +106,33 @@ Missing something? Shipwright does less rather than failing. With no browser, re
 
 ## Configure your repo
 
-Every team ships differently. The first run in a repo offers to create **`.claude/shipwright.md`** from [the template](templates/shipwright.md), pre-filled with what it can detect:
+Every team ships differently, so each repo gets a small config file, **`.claude/shipwright.md`**. You don't write it by hand. Run the wizard:
 
-```markdown
-## Branching
-- Base branch rule: the latest `release-*` branch on origin
-- Branch name: `<KEY>`
-
-## Commands
-- Dev server: `npm run dev` (http://localhost:3000)
-- Type-check: `npm run type-check`
-
-## Commit
-- Format: `<KEY>: <summary>` (one line)
-
-## House rules
-- Never run prettier --write on ts files; use eslint --fix.
+```
+/shipwright:setup
 ```
 
-Commit it and your whole team gets the same workflow. Personal preferences (your browser, extra pauses) go in `.claude/shipwright.local.md`, which you gitignore.
+(or just run `/shipwright:ticket` in a new repo and it offers the wizard itself).
 
-**Keep internal hostnames, ticket sites and project specifics in that file, inside your own repo.** The plugin itself stays generic and public.
+The wizard **detects first and asks second**. It reads your lockfile and scripts, your release branches, your PR template, your last 50 commit messages and branch names, your `CLAUDE.md` / `CONTRIBUTING.md`, and which tools you have connected. Then it asks **at most four multiple-choice questions** about what it couldn't be sure of, with its best guess pre-selected:
+
+```
+Base branch for new work?
+  ● Latest release-* branch (Detected: release-2.5)
+  ○ main
+  ○ develop
+
+Commit format?
+  ● PROJ-123: summary (Detected, e.g. "PROJ-981: Fix card title overflow")
+  ○ Conventional Commits
+  ○ Free text
+```
+
+One optional free-text question follows: *"Anything a new teammate usually gets wrong here?"* Those answers become house rules. You see the whole file before it is written.
+
+Commit it and your whole team gets the same workflow. Want it just for you? `/shipwright:setup --local` writes a gitignored `.claude/shipwright.local.md`. Re-run the wizard any time to update; it keeps what you already set.
+
+**Keep internal hostnames, ticket sites and project specifics in that file, inside your own repo.** The plugin itself stays generic and public. The wizard never copies secrets from `.env` files.
 
 ## Safety
 
@@ -154,7 +160,7 @@ Not yet, by design. Each check-in is short so approving is quick. A configurable
 No. Small features and design QA tickets work the same way: "reproduce" becomes "show the current state against the spec".
 
 **What does it cost my team in setup?**
-One config file per repo, and each person connects their own tracker, browser and `gh`.
+One `/shipwright:setup` per repo (about a minute), and each person connects their own tracker, browser and `gh`.
 
 ## Roadmap
 

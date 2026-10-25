@@ -1,7 +1,7 @@
 {
   "name": "shipwright",
   "description": "Ticket to PR. Give it a ticket key; it reads the ticket, reproduces the issue in a browser, branches, plans, fixes, verifies end to end and opens the PR, pausing for your approval after every step.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": {
     "name": "sulmanpucit",
     "url": "https://github.com/sulmanpucit"
