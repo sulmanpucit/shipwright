@@ -36,7 +36,8 @@ End every step with exactly this shape, then stop and wait for the reply:
 Rules for the check-in:
 - Keep it short. Facts with evidence, not narration. Offer detail rather than dumping it.
 - Anything that leaves the machine (push, PR, ticket comment, message) is spelled out in **Next** with its exact text, so approving the step approves that text.
-- "change ..." means redo or adjust the current step, then check in again. "stop" means write the run log and end.
+- "change ..." means redo or adjust the current step, then check in again. If the feedback sounds like a lasting rule, offer to save it (see Learning). "stop" means write the run log and end.
+- When a saved Step rule changed what you did, say so in **Learned**: "Following your rule: <rule>". If you deliberately did not follow one (it conflicts with the ticket or another rule), say that too.
 - Approval covers the next step only. It never carries over.
 - If a step is blocked, say so with ⚠️, list what you tried, and give the options. Do not work around a blocker silently.
 
@@ -44,9 +45,33 @@ Rules for the check-in:
 
 Keep a run log at `~/.claude/shipwright/<repo-name>/<TICKET-KEY>.md` (create the folders). After every step append: step, date, what was learned, the decision the user made. If `$ARGUMENTS` contains `resume`, or a log already exists for the ticket, read it, summarise where things stand in one check-in, and continue from the next unapproved step. Never redo an approved step without being asked.
 
+## Learning: rules that stick
+
+Shipwright gets better at this team's way of working with every ticket. Feedback the user gives during a run can become a **Step rule** that every future run follows.
+
+**Spot it.** Treat feedback as a candidate rule when it is general rather than about this ticket: words like "always", "never", "next time", "from now on", "we usually", "our team", or a correction that would obviously apply to other tickets ("you should check mobile too", "put the Figma link in the PR"). Feedback that only concerns this ticket ("use the blue variant here") is not a rule. Do not ask about it.
+
+**Apply it now, then ask once.** Redo the step with the feedback applied. In the same check-in, add:
+
+```
+**Save as a rule?** "<the rule, one imperative line>" under <Step>
+→ team (shared config) / just me (local config) / no, this ticket only
+```
+
+Write the rule as a short imperative that would make sense on any ticket ("Check 375px and 1440px when reproducing UI bugs."), not a transcript of what the user said. Ask at most once per piece of feedback. If the user ignores the question, treat it as "no".
+
+**Save it.** Only on an explicit team / just me:
+- Team: append to `.claude/shipwright.md`. Just me: `.claude/shipwright.local.md` (ensure it is gitignored).
+- Under `## Step rules`, then `### <Step name>` (Preflight, Read, Reproduce, Branch, Plan, Fix, Verify, Ship, Report), or `### Every step` for rules that apply throughout. Create the headings if missing.
+- Before writing, check for a duplicate or a conflicting rule. Duplicate: skip and say so. Conflict: show both and ask which wins; replace the old one rather than keeping both.
+- Show the exact line and file in the check-in when saved. Never commit the config.
+- Note the saved rule in the run log.
+
+**Use it.** Before starting each step, read the `### Every step` rules and the rules for that step, from both config files (local wins on conflict). Follow them as if they were part of this file. User instructions in chat still override them for the current run.
+
 ## Project config
 
-Read `.claude/shipwright.md` in the repo root, then `.claude/shipwright.local.md` if present (personal overrides, takes precedence). The config defines the tracker, base branch rule, branch and commit formats, commands, environments, browser, PR template and house rules. **Config rules override the defaults in this file.** User instructions in chat override both.
+Read `.claude/shipwright.md` in the repo root, then `.claude/shipwright.local.md` if present (personal overrides, takes precedence). The config defines the tracker, base branch rule, branch and commit formats, commands, environments, browser, PR template, house rules and Step rules (see Learning). **Config rules override the defaults in this file.** User instructions in chat override both.
 
 If no config exists, offer in Step 0 to run the setup wizard: follow `${CLAUDE_PLUGIN_ROOT}/skills/setup/SKILL.md` (the same flow as `/shipwright:setup`), then return to the Step 0 check-in. If the user declines, continue on detected defaults and say which ones in each check-in.
 

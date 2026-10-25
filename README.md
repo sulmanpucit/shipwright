@@ -9,7 +9,7 @@
 
 <p align="center">
   <em>It reproduces the bug in a real browser, fixes it, proves the fix, and opens the PR.<br>
-  You approve every step. It never moves on without you.</em>
+  You approve every step. It never moves on without you. And it learns how your team ships.</em>
 </p>
 
 <p align="center">
@@ -23,6 +23,7 @@
 <p align="center">
   <a href="#install"><strong>Install</strong></a> ·
   <a href="#how-it-works"><strong>How it works</strong></a> ·
+  <a href="#it-learns-how-your-team-ships"><strong>Learns</strong></a> ·
   <a href="#set-up-your-repo-in-a-minute"><strong>Setup</strong></a> ·
   <a href="#guardrails"><strong>Guardrails</strong></a> ·
   <a href="#faq"><strong>FAQ</strong></a>
@@ -181,6 +182,47 @@ Shipwright bets the other way: **the expensive mistakes happen at decision point
 
 You keep the speed of automation and the judgement of a reviewer who watched every step.
 
+## It learns how your team ships
+
+Every correction you make is a chance to never make it again. When your feedback sounds like a lasting rule, Shipwright applies it right away, then offers to remember it:
+
+```text
+**Step 2 of 8: Reproduce**  ✅ done
+
+**Learned**
+- Card title overflows by 14px at 1440px
+
+> also check mobile. we always check 375 and 1440 for UI bugs
+
+**Step 2 of 8: Reproduce**  ✅ redone
+**Learned**
+- 1440px: overflows by 14px.  375px: overflows by 31px and wraps to 3 lines
+
+**Save as a rule?** "Check 375px and 1440px when reproducing UI bugs." under Reproduce
+→ team / just me / no, this ticket only
+
+> team
+
+✓ Saved to .claude/shipwright.md → Step rules → Reproduce
+```
+
+On the next ticket, and for everyone on your team, that step follows the rule, and **says so**, so you can see your rules working and catch one that's gone stale:
+
+```text
+**Learned**
+- Following your rule: checked 375px and 1440px
+- 375px: badge overlaps the icon by 6px. 1440px: fine
+```
+
+**Rules are plain Markdown you own.** They live in your repo under `## Step rules`, filed by step. You can read, edit and review them in a PR like any other code.
+
+- **Team or just me.** Team rules go in `.claude/shipwright.md`; personal ones in your gitignored `.claude/shipwright.local.md`.
+- **Never silent.** Nothing is saved without your explicit "team" or "just me", and you see the exact line first.
+- **No pile-up.** Duplicates are skipped and conflicts are resolved with you, not stacked.
+- **Easy to prune.** `/shipwright:setup` → *Review saved rules* flags duplicates, contradictions and rules that point at scripts or branches that no longer exist.
+
+Ticket by ticket, Shipwright stops being a generic workflow and becomes **your team's** workflow, written down.
+
 ## Set up your repo in a minute
 
 Every team ships differently. Shipwright learns yours with a wizard, not a form:
@@ -267,6 +309,14 @@ No. Small features and design QA tickets run the same way. "Reproduce" becomes "
 </details>
 
 <details>
+<summary><strong>Does it remember my corrections?</strong></summary>
+<br>
+
+Yes, if you want it to. When feedback sounds like a lasting rule ("always", "never", "next time", "our team does…"), Shipwright offers to save it as a Step rule for your team or just for you. Feedback that only concerns the current ticket isn't saved, and nothing is saved without your say-so. See [It learns how your team ships](#it-learns-how-your-team-ships).
+
+</details>
+
+<details>
 <summary><strong>Where do my company's details live?</strong></summary>
 <br>
 
@@ -287,6 +337,7 @@ Claude Code can do every step. Shipwright makes it do **all** of them, **in orde
 - [x] Eight-step ticket workflow with approval gates
 - [x] Resume across sessions
 - [x] Setup wizard that detects your repo's conventions
+- [x] Learns Step rules from your feedback, for the team or just you
 - [ ] Optional auto-approve for local-only steps
 - [ ] Batch triage: walk a sprint's tickets and reproduce each
 - [ ] Hand a run over to a teammate

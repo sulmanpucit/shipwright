@@ -53,3 +53,14 @@ Everything here overrides the plugin defaults. Delete what you do not need.
 - Never run `prettier --write` on ts/tsx; use eslint --fix.
 - Never `git stash`.
 - No em dashes in comments or PR text.
+
+## Step rules
+<!--
+Learned during runs: when you give feedback like "always check mobile too",
+Shipwright offers to save it here (team) or in shipwright.local.md (just you).
+Each step reads its own rules before it starts. Edit freely, or review them
+with /shipwright:setup.
+-->
+### Every step
+### Reproduce
+### Ship

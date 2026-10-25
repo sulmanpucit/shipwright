@@ -1,6 +1,6 @@
 ---
 name: setup
-description: Wizard that creates or updates the repo's .claude/shipwright.md config for the /ticket workflow. Detects everything it can from the repo, asks only what it cannot detect with the detected answer pre-selected, previews the file and writes it on approval. Use when the user runs /shipwright:setup, or when /shipwright:ticket finds no config.
+description: Wizard that creates or updates the repo's .claude/shipwright.md config for the /ticket workflow, and reviews the Step rules Shipwright has learned. Detects everything it can from the repo, asks only what it cannot detect with the detected answer pre-selected, previews the file and writes it on approval. Use when the user runs /shipwright:setup, or when /shipwright:ticket finds no config.
 argument-hint: "[--local]"
 disable-model-invocation: true
 ---
@@ -31,7 +31,9 @@ Run these from the repo root, in as few shell calls as possible. Each finding ge
 | Environments | URLs in README, `.env.example`, deploy configs and recent PR bodies that look like dev / staging hosts. Always a guess; list them for confirmation. |
 | Existing rules | `CLAUDE.md`, `AGENTS.md`, `CONTRIBUTING.md`: lift workflow rules that already exist (commit rules, forbidden commands) rather than asking for them again. |
 
-If `.claude/shipwright.md` already exists, read it: this is an **update**. Keep every value the user set and every house rule, and only fill gaps or change what the user asks to change.
+If `.claude/shipwright.md` already exists, read it: this is an **update**. Keep every value the user set, every house rule and every Step rule, and only fill gaps or change what the user asks to change.
+
+**Review rules.** On an update, if the config has Step rules (in either file), offer one extra option: "Review saved rules". Then list them grouped by step with their file (team / just me), flag duplicates, contradictions and rules that mention things no longer in the repo (scripts, branches, paths), and let the user keep, edit, move between team and personal, or delete each. Show the resulting diff before writing.
 
 ## 2. Ask
 
@@ -50,7 +52,7 @@ Then one free-text prompt, which the user may skip: **"Anything a new teammate u
 
 ## 3. Preview
 
-Fill `${CLAUDE_PLUGIN_ROOT}/templates/shipwright.md` with the answers. Remove sections and placeholder lines that do not apply; no example values may survive. Mark values that are still guesses with `<!-- guess: confirm -->` so they are easy to find later.
+Fill `${CLAUDE_PLUGIN_ROOT}/templates/shipwright.md` with the answers. Remove sections and placeholder lines that do not apply; no example values may survive. Always keep the `## Step rules` section with its comment (empty step headings may go), so learned rules have a home. Mark values that are still guesses with `<!-- guess: confirm -->` so they are easy to find later.
 
 Show the complete file in a code block, with a short line above it: what was detected, what came from answers, how many guesses remain. Ask: **Write it, change something, or cancel?**
 
